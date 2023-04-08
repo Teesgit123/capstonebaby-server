@@ -24,7 +24,8 @@ app.use("/", loginRoute);
 app.use("/signup", signupRoute); // Signup route attached to the /signup endpoint
 app.use("/messages", messagesRouter);
 
-initSocketIo(io);
+const messagesNamespace = io.of("/messages");
+initSocketIo(messagesNamespace);
 
 server.listen(port, () => {
   console.log(`We are listening on ${port}`);

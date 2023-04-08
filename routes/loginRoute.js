@@ -21,7 +21,7 @@ router.post('/login', async (req, res) =>{
         }
 
         // If the combination is correct, generate a jwt token and send it to our user
-        const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY);
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY);
 
         // send the response back with the JWT
         return res.status(201).json({ token });

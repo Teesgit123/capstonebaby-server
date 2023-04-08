@@ -1,7 +1,7 @@
 const users = {};
 
-const initSocketIo = (io) => {
-  io.on("connection", (socket) => {
+const initSocketIo = (namespace) => {
+  namespace.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
 
     socket.on("register", (userId) => {
@@ -18,7 +18,7 @@ const initSocketIo = (io) => {
 
       const receiverSocketId = users[receiver];
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receive_message", { sender, content });
+        namespace.to(receiverSocketId).emit("receive_message", { sender, content });
       } else {
         console.log("Receiver not found");
       }
