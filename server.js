@@ -4,6 +4,7 @@ const cors = require("cors");
 const signupRoute = require("./routes/signupRoute.js");
 const loginRoute = require("./routes/loginRoute.js");
 const messagesRouter = require("./routes/messagesRoute.js");
+const conversationsRouter = require("./routes/conversationsRoute.js");
 const initSocketIo = require("./socket/socketFunction.js");
 
 const { CORS_ORIGIN } = process.env;
@@ -23,6 +24,7 @@ app.use(cors({ origin: CORS_ORIGIN }));
 app.use("/", loginRoute);
 app.use("/signup", signupRoute); // Signup route attached to the /signup endpoint
 app.use("/messages", messagesRouter);
+app.use("/conversations", conversationsRouter);
 
 const messagesNamespace = io.of("/messages");
 initSocketIo(messagesNamespace);
