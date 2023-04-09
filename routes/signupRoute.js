@@ -19,11 +19,11 @@ router.post("/", async (req, res) => {
       password: hashedPassword,
     };
 
-    const [user] = await knex("users").insert(newUser).returning('*');
+    const [userId] = await knex("users").insert(newUser);
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET_KEY);
 
-    res.status(201).json({ token, userId: user.id });
+    res.status(201).json({ token, userId: userId });
   } catch (error) {
     console.error("Error creating user", error);
     res.status(500).json({ message: "Error creating user" });

@@ -35,6 +35,6 @@ exports.messageFromConversation = async (req, res) => {
         res.json(messages);
     } catch (error) {
         console.log(error);
-        res.status(500)/json({ message: "There was an error finding messages" });
+        res.status(500).json({ message: "There was an error finding messages" });
     }
 };

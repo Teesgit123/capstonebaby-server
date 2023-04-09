@@ -13,7 +13,7 @@ const saveMessageToDatabase = async(sender, receiver, content) => {
 };
 
 const initSocketIo = (namespace) => {
-  const users = {};
+  const users = {}
 
   namespace.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
@@ -28,7 +28,7 @@ const initSocketIo = (namespace) => {
 
       // save message to database
       await saveMessageToDatabase(sender, receiver, content);
-
+      console.log(sender, receiver, content);
       
       const receiverSocketId = users[receiver];
 
