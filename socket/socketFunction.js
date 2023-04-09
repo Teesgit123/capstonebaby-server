@@ -1,19 +1,10 @@
-const knex = require('knex')(require('../knexfile.js'));
-const { findOrCreateNewConversation } = require("../controllers/conversationsController.js");
-
-const saveMessageToDatabase = async(sender, receiver, content) => {
-  const conversation = await findOrCreateNewConversation(sender, receiver);
-  const conversation_id = conversation.id;
-
-  const [newMessage] = await knex("messages")
-  .insert({ conversation_id, sender_id: sender, content });
-
-
-  return newMessage;
-};
+const knex = require("knex")(require("../knexfile.js"));
+const {
+  saveMessageToDatabase,
+} = require("../controllers/messagesController.js");
 
 const initSocketIo = (namespace) => {
-  const users = {}
+  const users = {};
 
   namespace.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
@@ -26,14 +17,19 @@ const initSocketIo = (namespace) => {
     socket.on("send_message", async (data) => {
       const { sender, receiver, content } = data;
 
-      // save message to database
-      await saveMessageToDatabase(sender, receiver, content);
-      console.log(sender, receiver, content);
-      
+      // Save message to the database
+      const conversationId = await saveMessageToDatabase(
+        sender,
+        receiver,
+        content
+      );
+
       const receiverSocketId = users[receiver];
 
       if (receiverSocketId) {
-        namespace.to(receiverSocketId).emit("receive_message", { sender, content });
+        namespace
+          .to(receiverSocketId)
+          .emit("receive_message", { sender, content, conversationId });
       } else {
         console.log("Receiver not found");
       }
