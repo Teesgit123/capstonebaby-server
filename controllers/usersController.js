@@ -1,16 +1,11 @@
-/*
-Purpose of a controller:
+const knex = require("knex")(require("../knexfile.js"));
 
-    1) Handle incoming requests from the client
-    2) Process data
-    3) return a response to the client
-
-    For my context, the controller should focus on:
-
-    1) handling requests
-    
-    and 
-        
-    2) processing data
-
-*/
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await knex.column('name', 'id').select().from('users');
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users", error);
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};

@@ -17,6 +17,12 @@ exports.up = function(knex) {
         .references("id")
         .inTable("users")
         .onDelete("CASCADE");
+    table.integer("receiver_id").unsigned();
+    table
+      .foreign("receiver_id")
+      .references("id")
+      .inTable("users")
+      .onDelete("CASCADE");
     table.text("content");
     table.timestamps(true, true);
   });

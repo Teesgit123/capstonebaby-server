@@ -9,13 +9,14 @@ require("dotenv").config();
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, name, password } = req.body;
 
   try {
     const hashedPassword = await argon2.hash(password);
 
     const newUser = {
-      email,
+      email, 
+      name,
       password: hashedPassword,
     };
 

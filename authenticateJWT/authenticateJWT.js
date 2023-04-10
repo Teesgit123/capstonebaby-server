@@ -2,21 +2,24 @@ const jwt = require("jsonwebtoken");
 
 exports.checkToken = (req, res, next) => {
     // get the token from the request's header
-    const token = req.headers["authorization"];
-
+    const reqHeader = req.headers.authorization;
+    console.log(reqHeader)
     // if token not sent in the request's header, send an error
-    if(!token) {
-        return res.status(403).send("You need to provide a token with your request");
+    if(!reqHeader) {
+        return res.status(401).json({ message: "No token was sent with your request. ----From authenticeJWT.js----"});
     }
 
     // extract token from "bearer" string;
-    const realToken = token.split(" ")[1];
+    const token = reqHeader.split(" ")[1];
+    console.log(token);
 
-    jwt.verify(realToken, process.env.JWT_SECRET_KEY, (error, decoded) => {
-        if(error) {
-            return res.status(401).send("You have made unauthorized request");
-        }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         req.userId = decoded.id;
         next();
-    });  
+    }
+    catch (error) {
+        res.status(401).json({ message: "The token you sent was invalid, please log out and login to generate a new one ---From AuthenticeJWT.js"});
+    }
+
 };

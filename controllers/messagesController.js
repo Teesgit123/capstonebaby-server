@@ -51,27 +51,35 @@ exports.messageFromConversation = async (req, res) => {
   }
 };
 
-exports.saveMessageToDatabase = async (sender_id, receiver_id, content) => {
-  const [conversation] = await knex("conversations")
-    .where(function () {
-      this.where("user1_id", sender_id).andWhere("user2_id", receiver_id);
-    })
-    .orWhere(function () {
-      this.where("user1_id", receiver_id).andWhere("user2_id", sender_id);
-    });
-
-  const conversation_id = conversation ? conversation.id : null;
-
-  const newMessage = {
-    conversation_id,
-    sender_id,
-    content,
-  };
-
+exports.saveMessageToDatabase = async (senderId, receiverId, content) => {
   try {
-    await knex("messages").insert(newMessage);
+    const [conversation] = await knex("conversations")
+      .where(function () {
+        this.where("user1_id", senderId).andWhere("user2_id", receiverId);
+      })
+      .orWhere(function () {
+        this.where("user1_id", receiverId).andWhere("user2_id", senderId);
+      })
+      .first();
+
+    let conversationId;
+    if (conversation) {
+      conversationId = conversation.id;
+    } else {
+      [conversationId] = await knex("conversations").insert({
+        user1_id: senderId,
+        user2_id: receiverId,
+      });
+    }
+
+    await knex("messages").insert({
+      conversation_id: conversationId,
+      sender_id: senderId,
+      content: content,
+    });
   } catch (error) {
-    console.error("Error saving message", error);
+    console.error("Error saving message to database", error);
+    throw error;
   }
 };
 
