@@ -7,7 +7,6 @@ const messagesRouter = require("./routes/messagesRoute.js");
 const conversationsRouter = require("./routes/conversationsRoute.js");
 const usersRoute = require('./routes/usersRoute.js')
 const startSocket = require("./socket/socketFunction.js");
-const authenticeJWT = require("./authenticateJWT/authenticateJWT.js");
 
 const { CORS_ORIGIN } = process.env;
 const port = process.env.PORT || 8080;
