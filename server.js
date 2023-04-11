@@ -5,7 +5,8 @@ const signupRoute = require("./routes/signupRoute.js");
 const loginRoute = require("./routes/loginRoute.js");
 const messagesRouter = require("./routes/messagesRoute.js");
 const conversationsRouter = require("./routes/conversationsRoute.js");
-const usersRoute = require('./routes/usersRoute.js')
+const usersRoute = require('./routes/usersRoute.js');
+const telescopesRoute = require('./routes/telescopesRoute.js');
 const startSocket = require("./socket/socketFunction.js");
 
 const { CORS_ORIGIN } = process.env;
@@ -26,6 +27,7 @@ app.use("/", loginRoute);
 app.use("/signup", signupRoute); // Signup route attached to the /signup endpoint
 app.use("/users", usersRoute);
 app.use("/messages", messagesRouter);
+app.use('/telescopes', telescopesRoute);
 app.use("/conversations", conversationsRouter);
 
 const messagesNamespace = io.of("/messages");

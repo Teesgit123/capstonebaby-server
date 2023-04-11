@@ -24,6 +24,8 @@ exports.up = function(knex) {
         .inTable("telescopes")
         .onDelete("CASCADE");
     table.decimal("amount", 10, 2);
+    table.decimal("period");
+    table.boolean("active");
     table.timestamps(true, true);
   });
 };

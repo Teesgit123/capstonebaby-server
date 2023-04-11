@@ -10,15 +10,13 @@ exports.up = function(knex) {
       .foreign("supplier_id")
       .references("id")
       .inTable("users");
+    table.string("model").notNullable();
     table.string("type");
-    table.index('type');
     table.integer("aperture");
     table.integer("focalLength");
     table.string("mount");
-    table.json("accessories");
+    table.string("accessories");
     table.string("condition");
-    table.integer("pricePerDay");
-    table.index('pricePerDay');
   })
 };
 
