@@ -1,7 +1,7 @@
 const knex = require('knex')(require('../knexfile.js'));
 
 
-exports.getTelescopes = async () => {
+exports.getTelescopes = async (req, res) => {
     return knex.transaction(async (trx) => {
         try {
             const telescopes = await trx('telescopes').select('*');
@@ -12,9 +12,9 @@ exports.getTelescopes = async () => {
             
             await trx.commit();
 
-            return details;
+            res.status(200).json(details);
         }
-    catch (error) {
+        catch (error) {
         console.log("Error from telescopesController");
 
         await trx.rollback();
