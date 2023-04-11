@@ -7,6 +7,8 @@ To run the server:
 
 2) npx knex migrate:latest
 
-3) npm start
+3) npx knex seed:run --specific=usersSeed.js
 
-by default i dont have any users in the seed file. Think this should start the server on 8080. Not entirely sure.
+4) npx knex seed:run --specific=telescopes.js
+
+5) npm start
