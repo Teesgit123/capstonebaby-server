@@ -1,26 +1,20 @@
 const knex = require("knex")(require("../knexfile.js"));
 const jwt = require("jsonwebtoken");
 
-
 const startSocket = (namespace) => {
   const users = {};
-
   namespace.use((socket, next) => {
     const token = socket.handshake.auth.token;
-
     if(!token) {
-      return next(new Error("There was an error with authenticating who you are."));
+      return next(new Error("There was an error with authenticating who you are, ie no token present."));
     }
 
     try {
-
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
       socket.userId = decoded.id;
-
       next();
-
     }
+    
     catch (error) {
       next(new Error("Your token was received, but it is invalid."));
     }

@@ -1,5 +1,34 @@
 const knex = require("knex")(require("../knexfile.js"));
-const { findOrCreateNewConversation } = require("./conversationsController.js");
+
+const findOrCreateNewConversation = async (user1_id, user2_id) => {
+  try {
+    const conversation = await knex("conversations")
+      .where(function () {
+        this.where("user1_id", user1_id).andWhere("user2_id", user2_id);
+      })
+      .orWhere(function () {
+        this.where("user1_id", user2_id).andWhere("user2_id", user1_id);
+      })
+      .first();
+
+    if (conversation) {
+      return conversation;
+    } else {
+      const [createdConversationId] = await knex("conversations").insert({
+        user1_id,
+        user2_id,
+      });
+
+      return await knex("conversations")
+        .where("id", createdConversationId)
+        .first();
+    }
+  } catch (error) {
+    console.error("Error fetching or creating conversation", error);
+  }
+};
+
+
 
 exports.createMessage = async (req, res) => {
   const { sender_id, receiver_id, content } = req.body;
@@ -36,7 +65,6 @@ exports.createMessage = async (req, res) => {
 
 
 exports.messageFromConversation = async (req, res) => {
-  const { conversationId } = req.params;
 
   try {
     const messages = await knex("messages")
@@ -51,36 +79,5 @@ exports.messageFromConversation = async (req, res) => {
   }
 };
 
-exports.saveMessageToDatabase = async (senderId, receiverId, content) => {
-  try {
-    const [conversation] = await knex("conversations")
-      .where(function () {
-        this.where("user1_id", senderId).andWhere("user2_id", receiverId);
-      })
-      .orWhere(function () {
-        this.where("user1_id", receiverId).andWhere("user2_id", senderId);
-      })
-      .first();
-
-    let conversationId;
-    if (conversation) {
-      conversationId = conversation.id;
-    } else {
-      [conversationId] = await knex("conversations").insert({
-        user1_id: senderId,
-        user2_id: receiverId,
-      });
-    }
-
-    await knex("messages").insert({
-      conversation_id: conversationId,
-      sender_id: senderId,
-      content: content,
-    });
-  } catch (error) {
-    console.error("Error saving message to database", error);
-    throw error;
-  }
-};
 
 

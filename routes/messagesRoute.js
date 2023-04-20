@@ -9,10 +9,4 @@ router.route("/")
   .get(auth.checkToken, messagesController.messageFromConversation)
   .post(auth.checkToken, messagesController.createMessage);
 
-
-
-// router.get("/", (req, res) => {
-//   res.send("Messages Route is this one");
-// });
-
 module.exports = router;

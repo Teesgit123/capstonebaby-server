@@ -25,7 +25,5 @@ const telescopesData = [
 
 exports.seed = async (knex) => {
     await knex('telescopes').del();
-
-    
     await knex('telescopes').insert(telescopesData);
 }
