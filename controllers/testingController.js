@@ -1,5 +1,8 @@
 const knex = require("knex")(require("../knexfile.js"));
 
+
+
+
 async function getUserData(req, res) {
   const { userId } = req.params;
 
@@ -47,3 +50,7 @@ async function getUserData(req, res) {
 }
 
 module.exports = getUserData;
+
+
+
+
