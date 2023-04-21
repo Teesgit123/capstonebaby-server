@@ -1,6 +1,6 @@
 const knex = require('knex')(require('../knexfile.js'));
 
-
+// There is a problem with the data being sent to the front end. The supplier_id and telescope_id are coming back as null in what looks like posted telescopes
 exports.getTelescopes = async (req, res) => {
     return knex.transaction(async (trx) => {
         try {
@@ -61,8 +61,8 @@ exports.createTelescope = async (req, res) => {
 
     console.log(req.body);
     const { telescopeDetails, rentalTerms } = req.body;
-    console.log(telescopeDetails);
-    console.log(rentalTerms);
+    // console.log(telescopeDetails);
+    // console.log(rentalTerms);
     return knex.transaction(async (trx) => {
         try {
             // insert telescope

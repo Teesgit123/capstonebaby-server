@@ -14,6 +14,10 @@ router.post('/login', async (req, res) =>{
 
         // query our user's table to see if the email exists
         const user = await knex('users').where('email', email).first();
+        
+        if (user) {
+            console.log(user);
+        }
 
         // If the user cannot be found or the password is incorrect, return an error
         if(!user || !await argon2.verify(user.password, password)) {
