@@ -66,11 +66,12 @@ exports.createTelescope = async (req, res) => {
     return knex.transaction(async (trx) => {
         try {
             // insert telescope
-            const [newTelescope] = await trx('telescopes').insert(telescopeDetails);
-
+            const [newTelescopeId] = await trx('telescopes').insert(telescopeDetails);
+            console.log("New Telescope: ", newTelescopeId);
+            console.log("Rental Terms Before: ", rentalTerms);
             // add telescope's id to the rental terms from the request
-            rentalTerms.telescope_id = newTelescope.id;
-
+            rentalTerms.telescope_id = newTelescopeId;
+            console.log('Rental Terms After: ', rentalTerms);
 
             // insert rental terms
             const [newRentalTerms] = await trx('rentalTerms').insert(rentalTerms);
@@ -78,7 +79,7 @@ exports.createTelescope = async (req, res) => {
             await trx.commit();
             // return {telescope_entry, rentalTerms_entry};
 
-            res.status(201).json({ newTelescope, newRentalTerms})
+            res.status(201).json({ newTelescopeId, newRentalTerms})
         }
         catch (error) {
             console.log("Error trying to insert new telescope and rental terms: ",error);
