@@ -20,8 +20,6 @@ const getConversationHistory = async (userId, conversationId) => {
         );
       })
       .orderBy("messages.created_at", "asc");
-    
-
     return messages;
   } catch (error) {
     console.log(
@@ -32,11 +30,6 @@ const getConversationHistory = async (userId, conversationId) => {
   }
 };
 
-
-
-
-
-
 const startSocket = (namespace) => {
   const users = {};
   namespace.use((socket, next) => {
@@ -44,26 +37,21 @@ const startSocket = (namespace) => {
     if(!token) {
       return next(new Error("There was an error with authenticating who you are, ie no token present."));
     }
-
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       socket.userId = decoded.id;
       next();
     }
-    
     catch (error) {
       next(new Error("Your token was received, but it is invalid."));
     }
   });
-
   namespace.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
-
     socket.on("register", (userId) => {
         users[userId] = socket.id;
         console.log(users);
     });
-
     socket.on("send_message", async (data) => {
         const { sender, receiver, content } = data;
         // Save message to the database
@@ -81,27 +69,17 @@ const startSocket = (namespace) => {
           console.log("Receiver not found");
         }
     });
-
     // event listener for getting conversation history
-
     socket.on("get_conversation_history", async ({ userId, conversationId }) => {
       try {
-        // get conversation history from the databadse, using the userId and conversation Id
+        // get conversation history from the database, using the userId and conversation Id
         const messages = await getConversationHistory(userId, conversationId);
-
         // emit the conversation_history event with the messages we just fetched
-
         socket.emit("conversation_history", messages);
-
       }
       catch (error) {
         console.log("Error getting the conversation history (this if from SocketFunction.js): ", error);
       }
-
-
-
-
-
     })
 
     socket.on("disconnect", () => {
@@ -109,6 +87,5 @@ const startSocket = (namespace) => {
     });
   })
 }
-
 
 module.exports = startSocket;
