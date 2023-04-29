@@ -1,5 +1,6 @@
 const knex = require("knex")(require("../knexfile.js"));
 const jwt = require("jsonwebtoken");
+const { Namespace } = require("socket.io");
 
 const getConversationHistory = async (userId, conversationId) => {
   try {
@@ -52,30 +53,53 @@ const startSocket = (namespace) => {
         users[userId] = socket.id;
         console.log(users);
     });
+
+
     socket.on("send_message", async (data) => {
         const { sender, receiver, content } = data;
         // Save message to the database
+
         const receiverSocketId = users[receiver];
         if (receiverSocketId) {
           namespace
             .to(receiverSocketId)
             .emit("receive_message", {
               sender,
+              sender_name: data.sender_name,
               receiver,
               content,
               });
-        } 
-        else {
+        } else {
           console.log("Receiver not found");
         }
+        
+        const senderSocketId = users[sender];
+        if (senderSocketId) {
+          namespace
+            .to(senderSocketId)
+            .emit("message_acknowledged", {
+              sender,
+              content,
+            });
+        } else {
+          console.log("Sender not found");
+        }
+
     });
+
+
+
+
     // event listener for getting conversation history
     socket.on("get_conversation_history", async ({ userId, conversationId }) => {
       try {
         // get conversation history from the database, using the userId and conversation Id
         const messages = await getConversationHistory(userId, conversationId);
         // emit the conversation_history event with the messages we just fetched
-        socket.emit("conversation_history", messages);
+        socket.emit("conversation_history", messages.map((message) => ({
+          sender_name: message.sender_name,
+          content: message.content,
+        })));
       }
       catch (error) {
         console.log("Error getting the conversation history (this if from SocketFunction.js): ", error);

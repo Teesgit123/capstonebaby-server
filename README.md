@@ -12,3 +12,9 @@ To run the server:
 4) npx knex seed:run --specific=telescopes.js
 
 5) npm start
+
+
+
+
+
+
